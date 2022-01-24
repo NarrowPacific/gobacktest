@@ -1,4 +1,4 @@
-package algo
+package indicator
 
 import (
 	"fmt"
@@ -6,11 +6,12 @@ import (
 	"testing"
 
 	gbt "github.com/dirkolbrich/gobacktest"
+	"github.com/dirkolbrich/gobacktest/algo"
 )
 
-func TestSMAIntegration(t *testing.T) {
+func TestHighestIntegration(t *testing.T) {
 	// set up mock Data Events
-	mockdata := testHelperMockData([]string{
+	mockdata := algo.TestHelperMockData([]string{
 		"2018-07-01",
 		"2018-07-02",
 		"2018-07-03",
@@ -28,22 +29,28 @@ func TestSMAIntegration(t *testing.T) {
 	var testCases = []struct {
 		msg       string
 		mockdata  []gbt.DataEvent
-		period    int
+		lookback  int
+		source    Source
 		runBefore int
 		expOk     bool
+		expValue  float64
 		expErr    error
 	}{
-		{msg: "test too few data points",
-			mockdata: mockdata[:1],
-			period:   5,
-			expOk:    false,
-			expErr:   fmt.Errorf("invalid value length for indicator sma"),
+		{msg: "test too much data points",
+			mockdata:  mockdata,
+			lookback:  7,
+			source:    CLOSE,
+			runBefore: 5,
+			expOk:     false,
+			expErr:    fmt.Errorf("invalid value length for indicator highest"),
 		},
 		{msg: "test normal run",
-			mockdata:  mockdata[:3],
-			period:    3,
-			runBefore: 2,
+			mockdata:  mockdata,
+			lookback:  5,
+			source:    CLOSE,
+			runBefore: 5,
 			expOk:     true,
+			expValue:  5,
 			expErr:    nil,
 		},
 	}
@@ -65,14 +72,13 @@ func TestSMAIntegration(t *testing.T) {
 		}
 
 		// create Algo
-		algo := SMA(tc.period)
+		algo := Highest(CLOSE, tc.lookback)
 
 		ok, err := algo.Run(strategy)
-		if (ok != tc.expOk) || !reflect.DeepEqual(err, tc.expErr) {
-			t.Errorf("%v: SMA(%v): \nexpected %v %#v, \nactual   %v %#v",
-				tc.msg, tc.period, tc.expOk, tc.expErr, ok, err)
+		if (ok != tc.expOk) || !reflect.DeepEqual(err, tc.expErr) || algo.Value() != tc.expValue {
+			t.Errorf("%v: Lowest(%v): \nexpected %v %v %#v, \nactual   %v %v %#v",
+				tc.msg, tc.lookback, tc.expOk, tc.expValue, tc.expErr, ok, algo.Value(), err)
 		}
-
 	}
 
 }

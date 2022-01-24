@@ -2,7 +2,7 @@ package gobacktest
 
 // DP sets the the precision of rounded floating numbers
 // used after calculations to format
-const DP = 4 // DP
+const DP = 2 // DP
 
 // Reseter provides a resting interface.
 type Reseter interface {
@@ -199,11 +199,16 @@ func (t *Backtest) eventLoop(e EventHandler) error {
 		t.eventQueue = append(t.eventQueue, fill)
 
 	case *Fill:
-		transaction, err := t.portfolio.OnFill(event, t.data)
+		transaction, settledTrade, err := t.portfolio.OnFill(event, t.data)
 		if err != nil {
 			break
 		}
 		t.statistic.TrackTransaction(transaction)
+
+		if settledTrade != nil {
+			settledTrade.UpdateCumulativeValues(t.statistic.SettledTrades(), t.portfolio.InitialCash())
+			t.statistic.TrackSettledTrade(*settledTrade)
+		}
 	}
 
 	return nil

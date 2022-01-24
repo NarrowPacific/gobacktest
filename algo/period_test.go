@@ -73,7 +73,7 @@ func TestRunPeriodWithOptions(t *testing.T) {
 
 func TestAlgoRunDailyCompare(t *testing.T) {
 	// set up mock time
-	times := testHelperTimeMap([]string{
+	times := TestHelperTimeMap([]string{
 		"2017-12-31",
 		"2018-01-01",
 		"2018-06-30",
@@ -113,7 +113,7 @@ func TestAlgoRunDailyCompare(t *testing.T) {
 
 func TestAlgoRunDailyImplementation(t *testing.T) {
 	// set up mock Data Events
-	mockdata := testHelperMockData([]string{
+	mockdata := TestHelperMockData([]string{
 		"2018-06-30",
 		"2018-07-01",
 		"2018-07-02",
@@ -159,7 +159,7 @@ func TestAlgoRunDailyImplementation(t *testing.T) {
 
 func TestAlgoRunWeeklyCompare(t *testing.T) {
 	// set up mock time
-	times := testHelperTimeMap([]string{
+	times := TestHelperTimeMap([]string{
 		"2016-12-31",
 		"2017-01-01",
 		"2017-12-31",
@@ -212,7 +212,7 @@ func TestAlgoRunWeeklyCompare(t *testing.T) {
 
 func TestAlgoRunMonthlyCompare(t *testing.T) {
 	// set up mock time
-	times := testHelperTimeMap([]string{
+	times := TestHelperTimeMap([]string{
 		"2017-12-31",
 		"2018-01-01",
 		"2018-01-02",
@@ -252,7 +252,7 @@ func TestAlgoRunMonthlyCompare(t *testing.T) {
 
 func TestAlgoRunMonthlyImplementation(t *testing.T) {
 	// set up mock Data Events
-	mockdata := testHelperMockData([]string{
+	mockdata := TestHelperMockData([]string{
 		"2017-12-31",
 		"2018-01-01",
 		"2018-01-02",
@@ -308,7 +308,7 @@ func TestAlgoRunMonthlyImplementation(t *testing.T) {
 
 func TestAlgoRunYearlyCompare(t *testing.T) {
 	// set up mock time
-	times := testHelperTimeMap([]string{
+	times := TestHelperTimeMap([]string{
 		"2017-12-31",
 		"2018-01-01",
 		"2018-01-02",
@@ -348,7 +348,7 @@ func TestAlgoRunYearlyCompare(t *testing.T) {
 
 func TestAlgoRunYearlyImplementation(t *testing.T) {
 	// set up mock Data Events
-	mockdata := testHelperMockData([]string{
+	mockdata := TestHelperMockData([]string{
 		"2017-12-31",
 		"2018-01-01",
 		"2018-01-02",

@@ -1,4 +1,4 @@
-Date,Open,High,Low,Close,Adj Close,Volume
+time,open,high,low,close,adj close,volume
 1987-12-30,1005.190002,1005.190002,1005.190002,1005.190002,1005.190002,0
 1987-12-31,null,null,null,null,null,null
 1988-01-01,null,null,null,null,null,null

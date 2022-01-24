@@ -113,7 +113,7 @@ func createBarEventFromEntry(line map[string]string, symbol string) (bar gbt.Bar
 	lowPrice, _ := strconv.ParseFloat(line["Low"], 64)
 	closePrice, _ := strconv.ParseFloat(line["Close"], 64)
 	adjClosePrice, _ := strconv.ParseFloat(line["Adj Close"], 64)
-	volume, _ := strconv.ParseInt(line["Volume"], 10, 64)
+	volume, _ := strconv.ParseFloat(line["Volume"], 64)
 
 	// create and populate new event
 	event := &gbt.Event{}

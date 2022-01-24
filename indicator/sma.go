@@ -1,4 +1,4 @@
-package algo
+package indicator
 
 import (
 	"fmt"
@@ -46,6 +46,6 @@ func (a *smaAlgo) Run(s gbt.StrategyHandler) (bool, error) {
 }
 
 // Value returns the value of this Algo.
-func (a *smaAlgo) Value() float64 {
+func (a *smaAlgo) Value() interface{} {
 	return a.sma
 }

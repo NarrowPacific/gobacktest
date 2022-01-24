@@ -33,7 +33,7 @@ func (algo biggerThanAlgo) Run(s gbt.StrategyHandler) (bool, error) {
 		return false, nil
 	}
 
-	result := algo.first.Value() > algo.second.Value()
+	result := algo.first.Value().(float64) > algo.second.Value().(float64)
 
 	return result, nil
 }
@@ -67,7 +67,7 @@ func (algo smallerThanAlgo) Run(s gbt.StrategyHandler) (bool, error) {
 		return false, nil
 	}
 
-	result := algo.first.Value() < algo.second.Value()
+	result := algo.first.Value().(float64) < algo.second.Value().(float64)
 
 	return result, nil
 }
@@ -101,7 +101,7 @@ func (algo equalAlgo) Run(s gbt.StrategyHandler) (bool, error) {
 		return false, nil
 	}
 
-	result := algo.first.Value() == algo.second.Value()
+	result := algo.first.Value().(float64) == algo.second.Value().(float64)
 
 	return result, nil
 }

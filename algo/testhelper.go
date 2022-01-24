@@ -6,7 +6,7 @@ import (
 	gbt "github.com/dirkolbrich/gobacktest"
 )
 
-func testHelperTimeMap(dates []string) map[string]time.Time {
+func TestHelperTimeMap(dates []string) map[string]time.Time {
 	timeMap := make(map[string]time.Time)
 	for _, d := range dates {
 		time, _ := time.Parse("2006-01-02", d)
@@ -15,7 +15,7 @@ func testHelperTimeMap(dates []string) map[string]time.Time {
 	return timeMap
 }
 
-func testHelperMockData(dates []string) []gbt.DataEvent {
+func TestHelperMockData(dates []string) []gbt.DataEvent {
 	mockdata := []gbt.DataEvent{}
 	for _, d := range dates {
 		time, _ := time.Parse("2006-01-02", d)

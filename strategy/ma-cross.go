@@ -5,6 +5,7 @@ import (
 
 	gbt "github.com/dirkolbrich/gobacktest"
 	"github.com/dirkolbrich/gobacktest/algo"
+	"github.com/dirkolbrich/gobacktest/indicator"
 )
 
 // MovingAverageCross is a test strategy, which interprets the SMA on a series of data events
@@ -18,7 +19,7 @@ func MovingAverageCross(short, long int) *gbt.Strategy {
 		algo.If(
 			// condition
 			algo.And(
-				algo.BiggerThan(algo.SMA(short), algo.SMA(long)),
+				algo.BiggerThan(indicator.SMA(short), indicator.SMA(long)),
 				algo.NotInvested(),
 			),
 			// action
@@ -27,7 +28,7 @@ func MovingAverageCross(short, long int) *gbt.Strategy {
 		algo.If(
 			// condition
 			algo.And(
-				algo.SmallerThan(algo.SMA(short), algo.SMA(long)),
+				algo.SmallerThan(indicator.SMA(short), indicator.SMA(long)),
 				algo.IsInvested(),
 			),
 			// action

@@ -155,7 +155,7 @@ type Bar struct {
 	Low      float64
 	Close    float64
 	AdjClose float64
-	Volume   int64
+	Volume   float64
 }
 
 // Price returns the close price of the bar event.

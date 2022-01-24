@@ -29,6 +29,8 @@ type EventTracker interface {
 type TransactionTracker interface {
 	TrackTransaction(FillEvent)
 	Transactions() []FillEvent
+	TrackSettledTrade(SettledTrade)
+	SettledTrades() []SettledTrade
 }
 
 // StatisticPrinter handles printing of the statistics to screen
@@ -58,6 +60,8 @@ type Statistic struct {
 	equity             []equityPoint
 	high               equityPoint
 	low                equityPoint
+
+	settledTradeHistory []SettledTrade
 }
 
 type equityPoint struct {
@@ -116,6 +120,16 @@ func (s Statistic) Transactions() []FillEvent {
 	return s.transactionHistory
 }
 
+// TrackSettledTrade tracks a settled trade
+func (s *Statistic) TrackSettledTrade(t SettledTrade) {
+	s.settledTradeHistory = append(s.settledTradeHistory, t)
+}
+
+// SettledTrades returns the complete settled trade history
+func (s Statistic) SettledTrades() []SettledTrade {
+	return s.settledTradeHistory
+}
+
 // Reset the statistic to a clean state
 func (s *Statistic) Reset() error {
 	s.eventHistory = nil
@@ -123,17 +137,21 @@ func (s *Statistic) Reset() error {
 	s.equity = nil
 	s.high = equityPoint{}
 	s.low = equityPoint{}
+	s.settledTradeHistory = nil
 	return nil
 }
 
 // PrintResult prints the backtest statistics to the screen
 func (s Statistic) PrintResult() {
 	fmt.Println("Printing backtest results:")
-	fmt.Printf("Counted %d total events.\n", len(s.Events()))
-
-	fmt.Printf("Counted %d total transactions:\n", len(s.Transactions()))
-	for k, v := range s.Transactions() {
-		fmt.Printf("%d. Transaction: %v Action: %v Price: %f Qty: %d\n", k+1, v.Time().Format("2006-01-02"), v.Direction(), v.Price(), v.Qty())
+	fmt.Printf("Counted %d total trades:\n", len(s.SettledTrades()))
+	for k, v := range s.SettledTrades() {
+		fmt.Printf("Trade #%d\n", k+1)
+		fmt.Printf("Profit: %v | Cum.Profit: %v | Profit Percent: %v | Cum.Profit Percent: %v | Run-up: %v | Run-up Percent: %v | Drawdown: %v | Drawdown Percent: %v\n", v.Profit, v.CumulativeProfit, v.ProfitPercent, v.CumulativeProfitPercent, v.RunUp, v.RunUpPercent, v.DrawDown, v.DrawDownPercent)
+		for _, order := range v.Orders {
+			fmt.Printf("Date: %v Action: %v Price: %f Qty: %d\n", order.Time().Format("2006-01-02"), order.Direction(), order.Price(), order.Qty())
+		}
+		fmt.Println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
 	}
 }
 
@@ -267,7 +285,7 @@ func (s Statistic) calcEquityReturn(e equityPoint) equityPoint {
 	return e
 }
 
-// calculates the drawdown of an equity point relativ to the latest high of the statistic handler
+// calculates the drawdown of an equity point relative to the latest high of the statistic handler
 func (s Statistic) calcDrawdown(e equityPoint) equityPoint {
 	if s.high.equity == 0 {
 		e.drawdown = 0

@@ -5,7 +5,7 @@ type AlgoHandler interface {
 	Run(StrategyHandler) (bool, error)
 	Always() bool
 	SetAlways()
-	Value() float64
+	Value() interface{}
 }
 
 // Algo is a base algo structure, implements AlgoHandler
@@ -30,7 +30,7 @@ func (a *Algo) SetAlways() {
 }
 
 // Value returns the value of this Algo.
-func (a *Algo) Value() float64 {
+func (a *Algo) Value() interface{} {
 	return 0
 }
 

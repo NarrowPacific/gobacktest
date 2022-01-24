@@ -18,7 +18,7 @@ type OnSignaler interface {
 
 // OnFiller is an interface for the OnFill method
 type OnFiller interface {
-	OnFill(FillEvent, DataHandler) (*Fill, error)
+	OnFill(FillEvent, DataHandler) (*Fill, *SettledTrade, error)
 }
 
 // Investor is an interface to check if a portfolio has a position of a symbol
@@ -134,7 +134,7 @@ func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (*Order, erro
 }
 
 // OnFill handles an incomming fill event
-func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (*Fill, error) {
+func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (*Fill, *SettledTrade, error) {
 	// Check for nil map, else initialise the map
 	if p.holdings == nil {
 		p.holdings = make(map[string]Position)
@@ -164,7 +164,28 @@ func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (*Fill, error) {
 	p.transactions = append(p.transactions, fill)
 
 	f := fill.(*Fill)
-	return f, nil
+
+	// Check if settled trade
+	var s *SettledTrade
+	if pos, ok := p.holdings[fill.Symbol()]; ok {
+		if pos.qty == 0 {
+			s = &SettledTrade{
+				Orders:          pos.transactions,
+				Qty:             pos.qtyBOT,
+				Profit:          pos.Profit(),
+				ProfitPercent:   pos.ProfitPercent(),
+				DrawDown:        pos.Drawdown(),
+				DrawDownPercent: pos.DrawdownPercent(),
+				RunUp:           pos.RunUp(),
+				RunUpPercent:    pos.RunUpPercent(),
+			}
+
+			// Remove position which is settled
+			delete(p.holdings, fill.Symbol())
+		}
+	}
+
+	return f, s, nil
 }
 
 // IsInvested checks if the portfolio has an open position on the given symbol

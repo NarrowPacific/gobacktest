@@ -3,7 +3,6 @@ package gobacktest
 import (
 	"math"
 	"time"
-	// "github.com/shopspring/decimal"
 )
 
 // Position represents the holdings position
@@ -33,12 +32,21 @@ type Position struct {
 	realProfitLoss   float64
 	unrealProfitLoss float64
 	totalProfitLoss  float64
+
+	direction    Direction
+	transactions []FillEvent // list of orders along to position
+	high         float64     // highest price during position time
+	low          float64     // lowest price during position time
 }
 
 // Create a new position based on a fill event
 func (p *Position) Create(fill FillEvent) {
 	p.timestamp = fill.Time()
 	p.symbol = fill.Symbol()
+	p.direction = fill.Direction()
+	p.transactions = append(p.transactions, fill)
+	p.high = fill.Price()
+	p.low = fill.Price()
 
 	p.update(fill)
 }
@@ -46,6 +54,7 @@ func (p *Position) Create(fill FillEvent) {
 // Update a position on a new fill event
 func (p *Position) Update(fill FillEvent) {
 	p.timestamp = fill.Time()
+	p.transactions = append(p.transactions, fill)
 
 	p.update(fill)
 }
@@ -56,6 +65,56 @@ func (p *Position) UpdateValue(data DataEvent) {
 
 	latest := data.Price()
 	p.updateValue(latest)
+	p.updateHighLow(data)
+}
+
+func (p *Position) Profit() float64 {
+	return p.realProfitLoss
+}
+
+func (p *Position) ProfitPercent() float64 {
+	percent := (p.Profit() / p.entryPrice()) * 100
+	return math.Round(percent*math.Pow10(DP)) / math.Pow10(DP)
+}
+
+func (p *Position) Drawdown() float64 {
+	var drawdown float64
+	if p.direction == BOT {
+		drawdown = p.avgPriceBOT - p.low
+	} else {
+		drawdown = p.high - p.avgPriceSLD
+	}
+
+	return math.Round(drawdown*math.Pow10(DP)) / math.Pow10(DP)
+}
+
+func (p *Position) DrawdownPercent() float64 {
+	percent := (p.Drawdown() / p.entryPrice()) * 100
+	return math.Round(percent*math.Pow10(DP)) / math.Pow10(DP)
+}
+
+func (p *Position) RunUp() float64 {
+	var runUp float64
+	if p.direction == BOT {
+		runUp = p.high - p.avgPriceBOT
+	} else {
+		runUp = p.avgPriceSLD - p.low
+	}
+
+	return math.Round(runUp*math.Pow10(DP)) / math.Pow10(DP)
+}
+
+func (p *Position) RunUpPercent() float64 {
+	percent := (p.RunUp() / p.entryPrice()) * 100
+	return math.Round(percent*math.Pow10(DP)) / math.Pow10(DP)
+}
+
+func (p *Position) entryPrice() float64 {
+	if p.direction == BOT {
+		return p.avgPriceBOT
+	} else {
+		return p.avgPriceSLD
+	}
 }
 
 // internal function to update a position on a new fill event
@@ -191,4 +250,15 @@ func (p *Position) updateValue(l float64) {
 	realProfitLoss := p.realProfitLoss
 	totalProfitLoss := realProfitLoss + unrealProfitLoss
 	p.totalProfitLoss = math.Round(totalProfitLoss*math.Pow10(DP)) / math.Pow10(DP)
+}
+
+func (p *Position) updateHighLow(data DataEvent) {
+	if bar, ok := data.(*Bar); ok {
+		if bar.High > p.high {
+			p.high = bar.High
+		}
+		if bar.Low < p.low {
+			p.low = bar.Low
+		}
+	}
 }
