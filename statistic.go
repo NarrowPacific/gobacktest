@@ -147,10 +147,10 @@ func (s Statistic) PrintResult() {
 	fmt.Printf("Counted %d total trades:\n", len(s.SettledTrades()))
 	for k, v := range s.SettledTrades() {
 		fmt.Printf("Trade #%d\n", k+1)
-		fmt.Printf("Profit: %v | Cum.Profit: %v | Profit Percent: %v | Cum.Profit Percent: %v | Run-up: %v | Run-up Percent: %v | Drawdown: %v | Drawdown Percent: %v\n", v.Profit, v.CumulativeProfit, v.ProfitPercent, v.CumulativeProfitPercent, v.RunUp, v.RunUpPercent, v.DrawDown, v.DrawDownPercent)
 		for _, order := range v.Orders {
 			fmt.Printf("Date: %v Action: %v Price: %f Qty: %d\n", order.Time().Format("2006-01-02"), order.Direction(), order.Price(), order.Qty())
 		}
+		fmt.Printf("Profit: %v | Profit Percent: %v | Cum.Profit: %v | Cum.Profit Percent: %v | Run-up: %v | Run-up Percent: %v | Drawdown: %v | Drawdown Percent: %v\n", v.Profit, v.ProfitPercent, v.CumulativeProfit, v.CumulativeProfitPercent, v.RunUp, v.RunUpPercent, v.DrawDown, v.DrawDownPercent)
 		fmt.Println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
 	}
 }
