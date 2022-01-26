@@ -25,7 +25,8 @@ func main() {
 	test.SetPortfolio(portfolio)
 
 	// define and load symbols
-	var symbols = []string{"BTCUSDT"}
+	var symbol = "BTCUSDT"
+	var symbols = []string{symbol}
 	test.SetSymbols(symbols)
 
 	// create data provider and load data into the backtest
@@ -35,13 +36,13 @@ func main() {
 
 	// create a new strategy with an algo stack and load into the backtest
 	strategy := gbt.NewStrategy("ema-cross")
-	short := 12
-	long := 26
+	fast := 12
+	slow := 26
 	strategy.SetAlgo(
 		algo.If(
 			// condition
 			algo.And(
-				algo.Crossover(indicator.EMA(short), indicator.EMA(long)),
+				algo.Crossover(indicator.EMA(fast), indicator.EMA(slow)),
 				algo.NotInvested(),
 			),
 			// action
@@ -50,7 +51,7 @@ func main() {
 		algo.If(
 			// condition
 			algo.And(
-				algo.Crossunder(indicator.EMA(short), indicator.EMA(long)),
+				algo.Crossunder(indicator.EMA(fast), indicator.EMA(slow)),
 				algo.NotInvested(),
 			),
 			// action
@@ -59,7 +60,7 @@ func main() {
 		algo.If(
 			// condition exit long
 			algo.And(
-				algo.Crossunder(indicator.EMA(short), indicator.EMA(long)),
+				algo.Crossunder(indicator.EMA(fast), indicator.EMA(slow)),
 				algo.IsLong(),
 			),
 			// action
@@ -68,7 +69,7 @@ func main() {
 		algo.If(
 			// condition exit short
 			algo.And(
-				algo.Crossover(indicator.EMA(short), indicator.EMA(long)),
+				algo.Crossover(indicator.EMA(fast), indicator.EMA(slow)),
 				algo.IsShort(),
 			),
 			// action
@@ -77,7 +78,7 @@ func main() {
 	)
 
 	// create an asset and append to strategy
-	strategy.SetChildren(gbt.NewAsset("BTCUSDT"))
+	strategy.SetChildren(gbt.NewAsset(symbol))
 
 	// load the strategy into the backtest
 	test.SetStrategy(strategy)
