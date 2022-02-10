@@ -1,12 +1,10 @@
 package indicator
 
 import (
-	"fmt"
-
 	gbt "github.com/dirkolbrich/gobacktest"
 )
 
-// highestAlgo is an algo which calculates the simple moving average.
+// highestAlgo is an algo which return highest price
 type highestAlgo struct {
 	gbt.Algo
 	source   Source
@@ -30,7 +28,7 @@ func (l *highestAlgo) Run(s gbt.StrategyHandler) (bool, error) {
 	var bars []*gbt.Bar
 
 	if len(list) < l.lookback {
-		return false, fmt.Errorf("invalid value length for indicator highest")
+		return false, nil
 	}
 
 	for i := 0; i < l.lookback; i++ {

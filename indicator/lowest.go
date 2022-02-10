@@ -1,8 +1,6 @@
 package indicator
 
 import (
-	"fmt"
-
 	gbt "github.com/dirkolbrich/gobacktest"
 )
 
@@ -15,7 +13,7 @@ const (
 	CLOSE
 )
 
-// lowestAlgo is an algo which calculates the simple moving average.
+// lowestAlgo is an algo which return lowest price.
 type lowestAlgo struct {
 	gbt.Algo
 	source   Source
@@ -39,7 +37,7 @@ func (l *lowestAlgo) Run(s gbt.StrategyHandler) (bool, error) {
 	var bars []*gbt.Bar
 
 	if len(list) < l.lookback {
-		return false, fmt.Errorf("invalid value length for indicator lowest")
+		return false, nil
 	}
 
 	for i := 0; i < l.lookback; i++ {

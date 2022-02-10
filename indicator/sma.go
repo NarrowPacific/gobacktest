@@ -30,7 +30,7 @@ func (a *smaAlgo) Run(s gbt.StrategyHandler) (bool, error) {
 	var values []float64
 
 	if len(list) < a.period {
-		return false, fmt.Errorf("invalid value length for indicator sma")
+		return false, nil
 	}
 
 	for i := 0; i < a.period; i++ {

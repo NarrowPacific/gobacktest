@@ -1,7 +1,6 @@
 package indicator
 
 import (
-	"fmt"
 	"reflect"
 	"testing"
 
@@ -42,7 +41,7 @@ func TestLowestIntegration(t *testing.T) {
 			source:    CLOSE,
 			runBefore: 5,
 			expOk:     false,
-			expErr:    fmt.Errorf("invalid value length for indicator lowest"),
+			expErr:    nil,
 		},
 		{msg: "test normal run",
 			mockdata:  mockdata,

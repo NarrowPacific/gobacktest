@@ -1,7 +1,6 @@
 package indicator
 
 import (
-	"fmt"
 	"reflect"
 	"testing"
 
@@ -38,7 +37,7 @@ func TestSMAIntegration(t *testing.T) {
 			mockdata: mockdata[:1],
 			period:   5,
 			expOk:    false,
-			expErr:   fmt.Errorf("invalid value length for indicator sma"),
+			expErr:   nil,
 		},
 		{msg: "test normal run",
 			mockdata:  mockdata[:3],

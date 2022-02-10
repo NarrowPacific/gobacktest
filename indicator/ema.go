@@ -31,7 +31,7 @@ func (a *emaAlgo) Run(s gbt.StrategyHandler) (bool, error) {
 	var values []float64
 
 	if len(list) < a.period {
-		return false, fmt.Errorf("invalid value length for indicator ema")
+		return false, nil
 	}
 
 	for i := 0; i < len(list); i++ {
