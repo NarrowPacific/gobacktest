@@ -38,6 +38,40 @@ func (algo biggerThanAlgo) Run(s gbt.StrategyHandler) (bool, error) {
 	return result, nil
 }
 
+type biggerThanOrEqualToAlgo struct {
+	gbt.Algo
+	first, second gbt.AlgoHandler
+}
+
+// BiggerThanOrEqualTo compares the value of the two containing algos.
+func BiggerThanOrEqualTo(first, second gbt.AlgoHandler) gbt.AlgoHandler {
+	return &biggerThanOrEqualToAlgo{
+		first:  first,
+		second: second,
+	}
+}
+
+// Run runs the algo, returns the bool value of the algo
+func (algo biggerThanOrEqualToAlgo) Run(s gbt.StrategyHandler) (bool, error) {
+	okFirst, err := algo.first.Run(s)
+	if err != nil {
+		return false, err
+	}
+
+	okSecond, err := algo.second.Run(s)
+	if err != nil {
+		return false, err
+	}
+
+	if !okFirst || !okSecond {
+		return false, nil
+	}
+
+	result := algo.first.Value().(float64) >= algo.second.Value().(float64)
+
+	return result, nil
+}
+
 type smallerThanAlgo struct {
 	gbt.Algo
 	first, second gbt.AlgoHandler
@@ -68,6 +102,40 @@ func (algo smallerThanAlgo) Run(s gbt.StrategyHandler) (bool, error) {
 	}
 
 	result := algo.first.Value().(float64) < algo.second.Value().(float64)
+
+	return result, nil
+}
+
+type smallerThanOrEqualToAlgo struct {
+	gbt.Algo
+	first, second gbt.AlgoHandler
+}
+
+// SmallerThanOrEqualTo compares if the value of the first algo is smaller than or equal to second.
+func SmallerThanOrEqualTo(first, second gbt.AlgoHandler) gbt.AlgoHandler {
+	return &smallerThanOrEqualToAlgo{
+		first:  first,
+		second: second,
+	}
+}
+
+// Run runs the algo, returns the bool value of the algo
+func (algo smallerThanOrEqualToAlgo) Run(s gbt.StrategyHandler) (bool, error) {
+	okFirst, err := algo.first.Run(s)
+	if err != nil {
+		return false, err
+	}
+
+	okSecond, err := algo.second.Run(s)
+	if err != nil {
+		return false, err
+	}
+
+	if !okFirst || !okSecond {
+		return false, nil
+	}
+
+	result := algo.first.Value().(float64) <= algo.second.Value().(float64)
 
 	return result, nil
 }
