@@ -33,7 +33,19 @@ func (algo biggerThanAlgo) Run(s gbt.StrategyHandler) (bool, error) {
 		return false, nil
 	}
 
-	result := algo.first.Value().(float64) > algo.second.Value().(float64)
+	var firstValue, secondValue float64
+	if firstValues, ok := algo.first.Value().([]float64); ok {
+		firstValue = firstValues[len(firstValues)-1]
+	} else {
+		firstValue = algo.first.Value().(float64)
+	}
+	if secondValues, ok := algo.second.Value().([]float64); ok {
+		secondValue = secondValues[len(secondValues)-1]
+	} else {
+		secondValue = algo.second.Value().(float64)
+	}
+
+	result := firstValue > secondValue
 
 	return result, nil
 }
@@ -67,7 +79,19 @@ func (algo biggerThanOrEqualToAlgo) Run(s gbt.StrategyHandler) (bool, error) {
 		return false, nil
 	}
 
-	result := algo.first.Value().(float64) >= algo.second.Value().(float64)
+	var firstValue, secondValue float64
+	if firstValues, ok := algo.first.Value().([]float64); ok {
+		firstValue = firstValues[len(firstValues)-1]
+	} else {
+		firstValue = algo.first.Value().(float64)
+	}
+	if secondValues, ok := algo.second.Value().([]float64); ok {
+		secondValue = secondValues[len(secondValues)-1]
+	} else {
+		secondValue = algo.second.Value().(float64)
+	}
+
+	result := firstValue >= secondValue
 
 	return result, nil
 }
@@ -101,7 +125,19 @@ func (algo smallerThanAlgo) Run(s gbt.StrategyHandler) (bool, error) {
 		return false, nil
 	}
 
-	result := algo.first.Value().(float64) < algo.second.Value().(float64)
+	var firstValue, secondValue float64
+	if firstValues, ok := algo.first.Value().([]float64); ok {
+		firstValue = firstValues[len(firstValues)-1]
+	} else {
+		firstValue = algo.first.Value().(float64)
+	}
+	if secondValues, ok := algo.second.Value().([]float64); ok {
+		secondValue = secondValues[len(secondValues)-1]
+	} else {
+		secondValue = algo.second.Value().(float64)
+	}
+
+	result := firstValue < secondValue
 
 	return result, nil
 }
@@ -135,7 +171,19 @@ func (algo smallerThanOrEqualToAlgo) Run(s gbt.StrategyHandler) (bool, error) {
 		return false, nil
 	}
 
-	result := algo.first.Value().(float64) <= algo.second.Value().(float64)
+	var firstValue, secondValue float64
+	if firstValues, ok := algo.first.Value().([]float64); ok {
+		firstValue = firstValues[len(firstValues)-1]
+	} else {
+		firstValue = algo.first.Value().(float64)
+	}
+	if secondValues, ok := algo.second.Value().([]float64); ok {
+		secondValue = secondValues[len(secondValues)-1]
+	} else {
+		secondValue = algo.second.Value().(float64)
+	}
+
+	result := firstValue <= secondValue
 
 	return result, nil
 }
@@ -169,7 +217,19 @@ func (algo equalAlgo) Run(s gbt.StrategyHandler) (bool, error) {
 		return false, nil
 	}
 
-	result := algo.first.Value().(float64) == algo.second.Value().(float64)
+	var firstValue, secondValue float64
+	if firstValues, ok := algo.first.Value().([]float64); ok {
+		firstValue = firstValues[len(firstValues)-1]
+	} else {
+		firstValue = algo.first.Value().(float64)
+	}
+	if secondValues, ok := algo.second.Value().([]float64); ok {
+		secondValue = secondValues[len(secondValues)-1]
+	} else {
+		secondValue = algo.second.Value().(float64)
+	}
+
+	result := firstValue == secondValue
 
 	return result, nil
 }
