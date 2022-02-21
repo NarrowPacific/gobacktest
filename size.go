@@ -25,6 +25,9 @@ func (s *Size) SizeOrder(order OrderEvent, data DataEvent, pf PortfolioHandler) 
 		return o, errors.New("cannot size order: no defaultSize or defaultValue set,")
 	}
 
+	// reserve order signal
+	o.SetSignal(o.Direction())
+
 	// decide on order direction
 	switch o.Direction() {
 	case BOT:

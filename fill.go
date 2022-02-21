@@ -4,6 +4,7 @@ package gobacktest
 type Fill struct {
 	Event
 	direction   Direction // BOT for buy, SLD for sell, HLD for hold
+	signal      Direction // BOT for buy, SLD for sell, EXT for exit
 	Exchange    string    // exchange symbol
 	qty         int64
 	price       float64
@@ -20,6 +21,16 @@ func (f Fill) Direction() Direction {
 // SetDirection sets the Directions field of a Fill
 func (f *Fill) SetDirection(dir Direction) {
 	f.direction = dir
+}
+
+// Signal returns the signal of a Fill
+func (f Fill) Signal() Direction {
+	return f.signal
+}
+
+// SetSignal sets the signal field of a Fill
+func (f *Fill) SetSignal(signal Direction) {
+	f.signal = signal
 }
 
 // Qty returns the qty field of a fill

@@ -60,10 +60,16 @@ type Directioner interface {
 	SetDirection(Direction)
 }
 
+type Signaler interface {
+	Signal() Direction
+	SetSignal(Direction)
+}
+
 // OrderEvent declares the order event interface.
 type OrderEvent interface {
 	EventHandler
 	Directioner
+	Signaler
 	Quantifier
 	IDer
 	Status() OrderStatus
@@ -87,6 +93,7 @@ type IDer interface {
 type FillEvent interface {
 	EventHandler
 	Directioner
+	Signaler
 	Quantifier
 	Price() float64
 	Commission() float64

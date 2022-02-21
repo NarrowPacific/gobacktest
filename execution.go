@@ -46,6 +46,7 @@ func (e *Exchange) OnOrder(order OrderEvent, data DataHandler) (*Fill, error) {
 	}
 
 	f.direction = order.Direction()
+	f.signal = order.Signal()
 
 	commission, err := e.Commission.Calculate(float64(f.qty), f.price)
 	if err != nil {

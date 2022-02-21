@@ -35,6 +35,7 @@ type Order struct {
 	orderType    OrderType // market or limit
 	status       OrderStatus
 	direction    Direction // buy or sell
+	signal       Direction // buy/sell or exit
 	assetType    string
 	qty          int64 // quantity of the order
 	qtyFilled    int64
@@ -61,6 +62,16 @@ func (o Order) Direction() Direction {
 // SetDirection sets the Directions field of an Order
 func (o *Order) SetDirection(dir Direction) {
 	o.direction = dir
+}
+
+// Signal returns the Signal of an Order
+func (o Order) Signal() Direction {
+	return o.signal
+}
+
+// SetDirection sets the Directions field of an Order
+func (o *Order) SetSignal(signal Direction) {
+	o.signal = signal
 }
 
 // Qty returns the Qty field of an Order
