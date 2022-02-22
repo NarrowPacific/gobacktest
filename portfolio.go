@@ -1,5 +1,10 @@
 package gobacktest
 
+import (
+	"math"
+	"time"
+)
+
 // PortfolioHandler is the combined interface building block for a portfolio.
 type PortfolioHandler interface {
 	OnSignaler
@@ -18,7 +23,7 @@ type OnSignaler interface {
 
 // OnFiller is an interface for the OnFill method
 type OnFiller interface {
-	OnFill(FillEvent, DataHandler) (*Fill, *SettledTrade, error)
+	OnFill(FillEvent, DataHandler, *ExecutionHandler) (*Fill, *SettledTrade, error)
 }
 
 // Investor is an interface to check if a portfolio has a position of a symbol
@@ -104,20 +109,7 @@ func (p *Portfolio) Reset() error {
 func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (*Order, error) {
 	// fmt.Printf("Portfolio receives Signal: %#v \n", signal)
 
-	// set order type
-	orderType := MarketOrder // default Market, should be set by risk manager
-	var limit float64
-
-	initialOrder := &Order{
-		Event: Event{
-			timestamp: signal.Time(),
-			symbol:    signal.Symbol(),
-		},
-		direction: signal.Direction(),
-		// Qty should be set by PositionSizer
-		orderType:  orderType,
-		limitPrice: limit,
-	}
+	initialOrder := initializeOrder(signal.Time(), signal.Symbol(), signal.Direction())
 
 	// fetch latest known price for the symbol
 	latest := data.Latest(signal.Symbol())
@@ -133,8 +125,59 @@ func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (*Order, erro
 	return order, nil
 }
 
+func initializeOrder(time time.Time, symbol string, direction Direction) *Order {
+	// set order type
+	orderType := MarketOrder // default Market, should be set by risk manager
+	var limit float64
+
+	return &Order{
+		Event: Event{
+			timestamp: time,
+			symbol:    symbol,
+		},
+		direction: direction,
+		// Qty should be set by PositionSizer
+		orderType:  orderType,
+		limitPrice: limit,
+	}
+}
+
 // OnFill handles an incomming fill event
-func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (*Fill, *SettledTrade, error) {
+func (p *Portfolio) OnFill(fill FillEvent, data DataHandler, exchange *ExecutionHandler) (*Fill, *SettledTrade, error) {
+	// Check for nil map, else initialise the map
+	if p.holdings == nil {
+		p.holdings = make(map[string]Position)
+	}
+
+	var f *Fill
+	var settledTrade, exitSettledTrade *SettledTrade
+	var err error
+	// Check if this fill is reverting current position then exit current position first
+	if _, ok := p.holdings[fill.Symbol()]; ok {
+		_, isShortPos := p.IsShort(fill.Symbol())
+		_, isLongPos := p.IsLong(fill.Symbol())
+		if (fill.Signal() == ENTRY_BOT && isShortPos) || (fill.Signal() == ENTRY_SLD && isLongPos) {
+			if exchange != nil {
+				_, exitSettledTrade, err = p.exitPosition(fill.Symbol(), data, *exchange)
+				if err != nil {
+					return nil, nil, err
+				}
+			}
+		}
+	}
+
+	f, settledTrade, err = p.onFill(fill, data)
+
+	// return either onFill or exit Position if present
+	if settledTrade == nil {
+		settledTrade = exitSettledTrade
+	}
+
+	return f, settledTrade, err
+}
+
+// OnFill handles an incomming fill event
+func (p *Portfolio) onFill(fill FillEvent, data DataHandler) (*Fill, *SettledTrade, error) {
 	// Check for nil map, else initialise the map
 	if p.holdings == nil {
 		p.holdings = make(map[string]Position)
@@ -186,6 +229,22 @@ func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (*Fill, *SettledTra
 	}
 
 	return f, s, nil
+}
+
+func (p *Portfolio) exitPosition(symbol string, data DataHandler, exchange ExecutionHandler) (*Fill, *SettledTrade, error) {
+	if pos, ok := p.holdings[symbol]; ok {
+		order := initializeOrder(data.Latest(symbol).Time(), symbol, pos.direction.GetOpposite())
+		order.SetQty(int64(math.Abs(float64(pos.qty))))
+		order.SetSignal(pos.direction.GetOpposite())
+		exitFill, err := exchange.OnOrder(order, data)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		return p.onFill(exitFill, data)
+	}
+
+	return nil, nil, nil
 }
 
 // IsInvested checks if the portfolio has an open position on the given symbol

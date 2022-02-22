@@ -482,7 +482,7 @@ func TestOnFill(t *testing.T) {
 	}
 
 	for i, tc := range testCases {
-		fill, _ := tc.portfolio.OnFill(tc.fill, tc.data)
+		fill, _, _ := tc.portfolio.OnFill(tc.fill, tc.data, nil)
 		if !reflect.DeepEqual(tc.fill, fill) {
 		}
 		if !reflect.DeepEqual(tc.portfolio, tc.expPortfolio) {
@@ -541,7 +541,7 @@ func TestIsInvested(t *testing.T) {
 
 	for _, tc := range testCases {
 		pos, ok := tc.portfolio.IsInvested(tc.symbol)
-		if (pos != tc.expPos) && (ok != tc.expOk) {
+		if (pos.qty != tc.expPos.qty) && (ok != tc.expOk) {
 			t.Errorf("%v\nIsInvested(%v): \nexpected %#v %v, \nactual %#v %v", tc.msg, tc.symbol, tc.expOk, tc.expPos, pos, ok)
 		}
 	}
@@ -596,7 +596,7 @@ func TestIsLong(t *testing.T) {
 
 	for _, tc := range testCases {
 		pos, ok := tc.portfolio.IsLong(tc.symbol)
-		if (pos != tc.expPos) && (ok != tc.expOk) {
+		if (pos.qty != tc.expPos.qty) && (ok != tc.expOk) {
 			t.Errorf("%v\nIsLong(%v): \nexpected %#v %v, \nactual %#v %v", tc.msg, tc.symbol, tc.expOk, tc.expPos, pos, ok)
 		}
 	}
@@ -651,7 +651,7 @@ func TestIsShort(t *testing.T) {
 
 	for _, tc := range testCases {
 		pos, ok := tc.portfolio.IsShort(tc.symbol)
-		if (pos != tc.expPos) && (ok != tc.expOk) {
+		if (pos.qty != tc.expPos.qty) && (ok != tc.expOk) {
 			t.Errorf("%v\nIsShort(%v): \nexpected %#v %v, \nactual %#v %v", tc.msg, tc.symbol, tc.expOk, tc.expPos, pos, ok)
 		}
 	}

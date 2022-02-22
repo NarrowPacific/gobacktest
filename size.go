@@ -30,10 +30,10 @@ func (s *Size) SizeOrder(order OrderEvent, data DataEvent, pf PortfolioHandler) 
 
 	// decide on order direction
 	switch o.Direction() {
-	case BOT:
+	case BOT, ENTRY_BOT:
 		o.SetDirection(BOT)
 		o.SetQty(s.setDefaultSize(data.Price()))
-	case SLD:
+	case SLD, ENTRY_SLD:
 		o.SetDirection(SLD)
 		o.SetQty(s.setDefaultSize(data.Price()))
 	case EXT: // all shares should be sold or bought, depending on position

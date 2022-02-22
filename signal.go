@@ -7,8 +7,12 @@ type Direction int
 const (
 	// Buy
 	BOT Direction = iota // 0
+	// Entry Buy
+	ENTRY_BOT
 	// Sell
 	SLD
+	// Entry Sell
+	ENTRY_SLD
 	// Hold
 	HLD
 	// Exit
@@ -17,9 +21,9 @@ const (
 
 func (d Direction) String() string {
 	switch d {
-	case BOT:
+	case BOT, ENTRY_BOT:
 		return "BUY"
-	case SLD:
+	case SLD, ENTRY_SLD:
 		return "SELL"
 	case HLD:
 		return "HOLD"
@@ -27,6 +31,17 @@ func (d Direction) String() string {
 		return "EXIT"
 	default:
 		return "UNKNOWN"
+	}
+}
+
+func (d Direction) GetOpposite() Direction {
+	switch d {
+	case BOT:
+		return SLD
+	case SLD:
+		return BOT
+	default:
+		return d
 	}
 }
 

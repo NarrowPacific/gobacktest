@@ -199,7 +199,7 @@ func (t *Backtest) eventLoop(e EventHandler) error {
 		t.eventQueue = append(t.eventQueue, fill)
 
 	case *Fill:
-		transaction, settledTrade, err := t.portfolio.OnFill(event, t.data)
+		transaction, settledTrade, err := t.portfolio.OnFill(event, t.data, &t.exchange)
 		if err != nil {
 			break
 		}

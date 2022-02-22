@@ -33,8 +33,12 @@ func (algo signalAlgo) Run(s gbt.StrategyHandler) (bool, error) {
 	switch {
 	case (algo.direction == "buy") || (algo.direction == "long") || (algo.direction == "BOT"):
 		signal.SetDirection(gbt.BOT)
+	case (algo.direction == "entry buy") || (algo.direction == "entry long"):
+		signal.SetDirection(gbt.ENTRY_BOT)
 	case (algo.direction == "sell") || (algo.direction == "short") || (algo.direction == "SLD"):
 		signal.SetDirection(gbt.SLD)
+	case (algo.direction == "entry sell") || (algo.direction == "entry short"):
+		signal.SetDirection(gbt.ENTRY_SLD)
 	case (algo.direction == "exit") || (algo.direction == "EXT"):
 		signal.SetDirection(gbt.EXT)
 	default:
