@@ -129,3 +129,24 @@ func (algo xorAlgo) Run(s gbt.StrategyHandler) (bool, error) {
 
 	return true, nil
 }
+
+type notAlgo struct {
+	gbt.Algo
+	a gbt.AlgoHandler
+}
+
+func Not(a gbt.AlgoHandler) gbt.AlgoHandler {
+	return &notAlgo{
+		a: a,
+	}
+}
+
+// Run runs the algo, returns the bool value of the algo.
+func (algo notAlgo) Run(s gbt.StrategyHandler) (bool, error) {
+	okA, err := algo.a.Run(s)
+	if err != nil {
+		return false, err
+	}
+
+	return !okA, nil
+}

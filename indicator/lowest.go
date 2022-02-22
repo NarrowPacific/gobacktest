@@ -36,11 +36,11 @@ func (l *lowestAlgo) Run(s gbt.StrategyHandler) (bool, error) {
 	list := data.List(symbol)
 	var bars []*gbt.Bar
 
-	if len(list) < l.lookback {
+	if len(list) < l.lookback+1 {
 		return false, nil
 	}
 
-	for i := 0; i < l.lookback; i++ {
+	for i := 1; i <= l.lookback; i++ {
 		bars = append(bars, list[len(list)-i-1].(*gbt.Bar))
 	}
 

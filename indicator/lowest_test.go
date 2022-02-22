@@ -37,7 +37,7 @@ func TestLowestIntegration(t *testing.T) {
 	}{
 		{msg: "test too much data points",
 			mockdata:  mockdata,
-			lookback:  7,
+			lookback:  6,
 			source:    CLOSE,
 			runBefore: 5,
 			expOk:     false,
@@ -45,7 +45,7 @@ func TestLowestIntegration(t *testing.T) {
 		},
 		{msg: "test normal run",
 			mockdata:  mockdata,
-			lookback:  5,
+			lookback:  4,
 			source:    CLOSE,
 			runBefore: 5,
 			expOk:     true,
