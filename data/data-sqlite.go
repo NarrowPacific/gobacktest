@@ -123,14 +123,15 @@ func createBarEventFromEntry(line map[string]string, symbol string) (bar gbt.Bar
 	metric := &gbt.Metric{}
 
 	bar = &gbt.Bar{
-		Event:    *event,
-		Metric:   *metric,
-		Open:     openPrice,
-		High:     highPrice,
-		Low:      lowPrice,
-		Close:    closePrice,
-		AdjClose: adjClosePrice,
-		Volume:   volume,
+		Event:     *event,
+		Metric:    *metric,
+		Open:      openPrice,
+		High:      highPrice,
+		Low:       lowPrice,
+		Close:     closePrice,
+		AdjClose:  adjClosePrice,
+		Volume:    volume,
+		FillPrice: closePrice,
 	}
 
 	return bar, nil

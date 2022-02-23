@@ -139,6 +139,7 @@ type DataEvent interface {
 // Pricer defines the handling otf the latest Price Information
 type Pricer interface {
 	Price() float64
+	SetPrice(float64)
 }
 
 // BarEvent declares a bar event interface.
@@ -150,17 +151,22 @@ type BarEvent interface {
 type Bar struct {
 	Event
 	Metric
-	Open     float64
-	High     float64
-	Low      float64
-	Close    float64
-	AdjClose float64
-	Volume   float64
+	Open      float64
+	High      float64
+	Low       float64
+	Close     float64
+	AdjClose  float64
+	Volume    float64
+	FillPrice float64
 }
 
 // Price returns the close price of the bar event.
 func (b Bar) Price() float64 {
-	return b.Close
+	return b.FillPrice
+}
+
+func (b Bar) SetPrice(price float64) {
+	b.FillPrice = price
 }
 
 // TickEvent declares a bar event interface.
